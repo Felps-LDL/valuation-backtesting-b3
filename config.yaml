@@ -1,0 +1,73 @@
+# ─────────────────────────────────────────────────────────────────
+# config.yaml — Configuração Central do Sistema
+# ─────────────────────────────────────────────────────────────────
+#
+# DESCRIÇÃO:
+#   Arquivo YAML centralizado com todos os parâmetros do experimento.
+#   Garante reprodutibilidade e rastreabilidade (TCC seção 6.7).
+#   
+#   NUNCA altere valores diretamente no código Python.
+#   Edite este arquivo para manter histórico de versões.
+#
+# REFERÊNCIAS:
+#   - TCC seção 4: Configuração do Experimento
+#   - TCC seção 3: Metodologia (camadas)
+#   - Reproducibility: commit este arquivo junto ao código
+#
+# ESTRUTURA:
+#   - periodo      : janela temporal do backtesting (2015-2024)
+#   - universo     : filtros de seleção do universo B3
+#   - estrategias  : ativação e thresholds de cada método (Graham, Bazin, Lynch, ROE)
+#   - carteira     : lógica de combinação (AND/OR/k-of-n) e ponderação
+#   - backtest     : parâmetros de simulação (capital, custo, frequência)
+#   - benchmark    : ativo de comparação (Ibovespa)
+#
+# VARIAVEIS DE INTERESSE:
+#   - estrategias.*.ativo      : True = filtro ativado
+#   - carteira.logica          : "k-of-n" (recomendado) | "AND" | "OR"
+#   - carteira.k               : mínimo de critérios (k-of-n)
+#   - backtest.frequencia_meses: rebalanceamento (3 = trimestral)
+#   - backtest.custo_operacao  : corretagem simplificada (0.1% por transação)
+# ─────────────────────────────────────────────────────────────────
+
+periodo:
+  inicio: "2015-01-01"
+  fim: "2024-12-31"
+
+universo:
+  liquidez_minima: 100000
+  pl_maximo: 40
+  remover_financeiras: false
+
+estrategias:
+  graham1:
+    ativo: true
+    threshold: 22.5
+  graham2:
+    ativo: true
+  bazin:
+    ativo: true
+    dy_minimo: 6.0
+  lynch:
+    ativo: true
+    peg_maximo: 2.0
+  roe_equivalente:
+    ativo: true
+    threshold: 10.0
+
+carteira:
+  logica: "k-of-n"
+  k: 3
+  top_k: 15
+  ponderacao: "equal"
+
+backtest:
+  frequencia_meses: 3
+  capital_inicial: 100000.0
+  custo_operacao: 0.001
+  taxa_livre_risco_anual: 0.1075
+  dias_uteis_ano: 252
+
+benchmark:
+  ticker: "^BVSP"
+  nome: "Ibovespa"

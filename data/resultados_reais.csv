@@ -1,0 +1,21 @@
+seed,tipo,Performance (%),Volatilidade Anual (%),Máximo Drawdown (%)
+1,sem_filtros,107.14,28.92,-54.30
+2,sem_filtros,293.32,26.33,-50.42
+3,sem_filtros,59.51,24.54,-49.79
+4,sem_filtros,-19.75,26.42,-53.44
+5,sem_filtros,111.61,26.60,-49.50
+6,sem_filtros,211.69,27.44,-51.48
+7,sem_filtros,57.21,24.54,-53.48
+8,sem_filtros,-38.99,25.90,-51.32
+9,sem_filtros,72.87,25.90,-47.88
+10,sem_filtros,-117.80,26.99,-64.54
+1,com_filtros,237.59,27.04,-51.58
+2,com_filtros,308.23,23.81,-47.19
+3,com_filtros,317.63,25.46,-49.67
+4,com_filtros,241.47,26.33,-49.78
+5,com_filtros,253.69,26.72,-51.52
+6,com_filtros,305.73,25.20,-49.85
+7,com_filtros,227.73,25.83,-49.38
+8,com_filtros,182.98,26.98,-50.22
+9,com_filtros,197.02,24.66,-47.80
+10,com_filtros,261.25,24.40,-47.64
