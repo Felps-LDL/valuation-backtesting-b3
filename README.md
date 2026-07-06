@@ -29,8 +29,23 @@ via backtesting histórico contra o Ibovespa.
 
 O sistema busca indicadores fundamentalistas (via [yFinance](https://pypi.org/project/yfinance/))
 de um universo de ~130 ações da B3, aplica critérios de valuation configuráveis, monta uma
-carteira e simula sua performance histórica (2015–2024) comparando com o Ibovespa através de
-métricas como CAGR, Sharpe, Sortino, Drawdown, Alpha e Beta.
+carteira e simula sua performance histórica (2015–2024) comparando com o Ibovespa.
+
+O backtest calcula um conjunto amplo de métricas de risco-retorno (CAGR, Sharpe, Sortino, Calmar,
+Alpha, Beta, Hit Rate, entre outras — ver [backtest/metricas.py](backtest/metricas.py)) para dar
+uma visão completa da carteira. No entanto, as **três hipóteses centrais do TCC** — e por isso o
+foco das análises em [`gerar_graficos_resultados.py`](gerar_graficos_resultados.py) — avaliam
+especificamente:
+
+- **H1 — Alpha (Outperformance)**: a carteira com filtros supera o Ibovespa mais consistentemente
+  do que uma seleção aleatória?
+- **H2 — Volatilidade Anual**: os filtros fundamentalistas reduzem o risco (dispersão de
+  retornos) da carteira?
+- **H3 — Máximo Drawdown**: os filtros fundamentalistas atenuam as quedas máximas em relação ao
+  pico?
+
+As demais métricas (Sharpe, Sortino, Calmar, Beta, Hit Rate…) são calculadas e exibidas como
+suporte complementar na interface web, mas não fazem parte das hipóteses testadas.
 
 ## Estratégias implementadas
 
