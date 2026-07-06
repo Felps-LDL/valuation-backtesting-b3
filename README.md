@@ -130,8 +130,9 @@ python rodar_experimento_completo.py
 
 ### 4. Geração de gráficos das hipóteses
 
-A partir de `data/resultados_reais.csv`, gera os gráficos de linha usados para comparar as
-hipóteses do TCC (performance, volatilidade, drawdown) e salva em `analise/`.
+A partir de `data/resultados_reais.csv`, gera os gráficos de barras agrupadas usados para
+comparar as hipóteses do TCC (performance, volatilidade, drawdown) rodada a rodada, com vs. sem
+filtros, e salva em `analise/`.
 
 ```bash
 python gerar_graficos_resultados.py

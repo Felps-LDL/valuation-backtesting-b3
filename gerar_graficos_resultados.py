@@ -1,18 +1,18 @@
 """
-gerar_graficos_linhas.py
-========================
+gerar_graficos_resultados.py
+=============================
 
 DESCRIÇÃO:
-    Gera gráficos de LINHAS para as 3 hipóteses.
-    Mostra a evolução de cada métrica ao longo das 10 rodadas.
-    
+    Gera gráficos de BARRAS (agrupadas) para as 3 hipóteses.
+    Compara, rodada a rodada, o desempenho com filtros vs. sem filtros.
+
     Melhor para visualizar:
-    - Tendência geral
-    - Variação rodada a rodada
-    - Consistência da estratégia com filtros
-    
+    - Comparação direta rodada a rodada (com vs. sem filtros)
+    - Diferença absoluta entre as duas condições
+    - Leitura rápida em apresentação/TCC
+
 EXECUÇÃO:
-    $ python gerar_graficos_linhas.py
+    $ python gerar_graficos_resultados.py
 """
 
 import pandas as pd
@@ -43,336 +43,314 @@ def criar_diretorio():
     Path("analise").mkdir(exist_ok=True)
 
 
-def plotar_h1_linhas(df):
+def plotar_h1_barras(df):
     """
-    H1: Performance (Linhas)
-    Mostra evolução das 10 rodadas
+    H1: Performance (Barras)
+    Compara com/sem filtros rodada a rodada
     """
-    print("\n📈 H1 — PERFORMANCE (Gráfico de Linhas)")
-    
+    print("\n📈 H1 — PERFORMANCE (Gráfico de Barras)")
+
     df_com = df[df['tipo'] == 'com_filtros'].sort_values('seed').reset_index(drop=True)
     df_sem = df[df['tipo'] == 'sem_filtros'].sort_values('seed').reset_index(drop=True)
-    
+
     fig = go.Figure()
-    
-    # Linha com filtros
-    fig.add_trace(go.Scatter(
+
+    fig.add_trace(go.Bar(
         x=df_com['seed'],
         y=df_com['Performance (%)'],
-        mode='lines+markers',
         name='Com Filtros',
-        line=dict(color='#1D9E75', width=3),
-        marker=dict(size=10, symbol='circle'),
-        fill='tozeroy',
-        fillcolor='rgba(29, 158, 117, 0.2)',
+        marker_color='#1D9E75',
+        text=df_com['Performance (%)'],
+        texttemplate='%{text:.1f}',
+        textposition='inside',
+        textangle=-90,
+        textfont=dict(color='white', size=11),
         hovertemplate='<b>Rodada %{x}</b><br>Performance: %{y:.2f}%<extra></extra>'
     ))
-    
-    # Linha sem filtros
-    fig.add_trace(go.Scatter(
+
+    fig.add_trace(go.Bar(
         x=df_sem['seed'],
         y=df_sem['Performance (%)'],
-        mode='lines+markers',
         name='Sem Filtros',
-        line=dict(color='#E24B4A', width=3, dash='dash'),
-        marker=dict(size=10, symbol='diamond'),
-        fill='tozeroy',
-        fillcolor='rgba(226, 75, 74, 0.1)',
+        marker_color='#E24B4A',
+        text=df_sem['Performance (%)'],
+        texttemplate='%{text:.1f}',
+        textposition='inside',
+        textangle=-90,
+        textfont=dict(color='white', size=11),
         hovertemplate='<b>Rodada %{x}</b><br>Performance: %{y:.2f}%<extra></extra>'
     ))
-    
-    # Linha de média com filtros
+
     media_com = df_com['Performance (%)'].mean()
-    fig.add_hline(
-        y=media_com,
-        line_dash="dot",
-        line_color="#1D9E75",
-        annotation_text=f"Média Com Filtros: {media_com:.2f}%",
-        annotation_position="right"
-    )
-    
-    # Linha de média sem filtros
     media_sem = df_sem['Performance (%)'].mean()
-    fig.add_hline(
-        y=media_sem,
-        line_dash="dot",
-        line_color="#E24B4A",
-        annotation_text=f"Média Sem Filtros: {media_sem:.2f}%",
-        annotation_position="right"
-    )
-    
+
     fig.update_layout(
-        title='<b>H1: Performance ao Longo de 10 Rodadas</b><br><sub>Mostra consistência e variação (Outperformance vs Ibovespa)</sub>',
+        title=dict(
+            text='<b>H1: Performance (Outperformance vs Ibovespa)</b>'
+                 '<br><sup>10 rodadas com seed 1-10</sup>',
+            x=0.01, xanchor='left', y=0.95, yanchor='top', font=dict(size=16),
+        ),
         xaxis_title='Seed (Rodada)',
         yaxis_title='Performance (%)',
+        xaxis=dict(dtick=2),
+        barmode='group',
         height=600,
         hovermode='x unified',
         template='plotly_dark',
         font=dict(size=12),
-        legend=dict(x=0.02, y=0.98)
+        legend=dict(x=1.0, y=1.0),
+        uniformtext_minsize=9,
     )
-    
-    fig.write_html("analise/h1_performance_linhas.html")
-    
+
+    fig.write_html("analise/h1_outperformance_real.html")
+    fig.write_image("analise/h1_outperformance_real.png", scale=2)
+
     print(f"  ✅ Com Filtros Média: {media_com:.2f}%")
     print(f"  ⚠️  Sem Filtros Média: {media_sem:.2f}%")
     print(f"  📊 Diferença: +{media_com - media_sem:.2f}%")
 
 
-def plotar_h2_linhas(df):
+def plotar_h2_barras(df):
     """
-    H2: Volatilidade (Linhas)
-    Mostra consistência do risco
+    H2: Volatilidade (Barras)
+    Compara consistência do risco rodada a rodada
     """
-    print("\n📊 H2 — VOLATILIDADE ANUALIZADA (Gráfico de Linhas)")
-    
+    print("\n📊 H2 — VOLATILIDADE ANUALIZADA (Gráfico de Barras)")
+
     df_com = df[df['tipo'] == 'com_filtros'].sort_values('seed').reset_index(drop=True)
     df_sem = df[df['tipo'] == 'sem_filtros'].sort_values('seed').reset_index(drop=True)
-    
+
     fig = go.Figure()
-    
-    fig.add_trace(go.Scatter(
+
+    fig.add_trace(go.Bar(
         x=df_com['seed'],
         y=df_com['Volatilidade Anual (%)'],
-        mode='lines+markers',
         name='Com Filtros',
-        line=dict(color='#1D9E75', width=3),
-        marker=dict(size=10, symbol='circle'),
-        fill='tozeroy',
-        fillcolor='rgba(29, 158, 117, 0.2)',
+        marker_color='#1D9E75',
+        text=df_com['Volatilidade Anual (%)'],
+        texttemplate='%{text:.1f}',
+        textposition='inside',
+        textangle=-90,
+        textfont=dict(color='white', size=11),
         hovertemplate='<b>Rodada %{x}</b><br>Volatilidade: %{y:.2f}%<extra></extra>'
     ))
-    
-    fig.add_trace(go.Scatter(
+
+    fig.add_trace(go.Bar(
         x=df_sem['seed'],
         y=df_sem['Volatilidade Anual (%)'],
-        mode='lines+markers',
         name='Sem Filtros',
-        line=dict(color='#E24B4A', width=3, dash='dash'),
-        marker=dict(size=10, symbol='diamond'),
-        fill='tozeroy',
-        fillcolor='rgba(226, 75, 74, 0.1)',
+        marker_color='#E24B4A',
+        text=df_sem['Volatilidade Anual (%)'],
+        texttemplate='%{text:.1f}',
+        textposition='inside',
+        textangle=-90,
+        textfont=dict(color='white', size=11),
         hovertemplate='<b>Rodada %{x}</b><br>Volatilidade: %{y:.2f}%<extra></extra>'
     ))
-    
+
     media_com = df_com['Volatilidade Anual (%)'].mean()
-    fig.add_hline(
-        y=media_com,
-        line_dash="dot",
-        line_color="#1D9E75",
-        annotation_text=f"Média Com Filtros: {media_com:.2f}%",
-        annotation_position="right"
-    )
-    
     media_sem = df_sem['Volatilidade Anual (%)'].mean()
-    fig.add_hline(
-        y=media_sem,
-        line_dash="dot",
-        line_color="#E24B4A",
-        annotation_text=f"Média Sem Filtros: {media_sem:.2f}%",
-        annotation_position="right"
-    )
-    
+
     fig.update_layout(
-        title='<b>H2: Volatilidade Anualizada ao Longo de 10 Rodadas</b><br><sub>Menor = Menor risco (Mais consistente)</sub>',
+        title=dict(
+            text='<b>H2: Volatilidade Anualizada (Menor = Menor Risco)</b>'
+                 '<br><sup>10 rodadas com seed 1-10</sup>',
+            x=0.01, xanchor='left', y=0.95, yanchor='top', font=dict(size=16),
+        ),
         xaxis_title='Seed (Rodada)',
         yaxis_title='Volatilidade (%)',
+        xaxis=dict(dtick=2),
+        barmode='group',
         height=600,
         hovermode='x unified',
         template='plotly_dark',
         font=dict(size=12),
-        legend=dict(x=0.02, y=0.98)
+        legend=dict(x=1.0, y=1.0),
+        uniformtext_minsize=9,
     )
-    
-    fig.write_html("analise/h2_volatilidade_linhas.html")
-    
+
+    fig.write_html("analise/h2_volatilidade_real.html")
+    fig.write_image("analise/h2_volatilidade_real.png", scale=2)
+
     print(f"  ✅ Com Filtros Média: {media_com:.2f}%")
     print(f"  ⚠️  Sem Filtros Média: {media_sem:.2f}%")
     print(f"  📊 Diferença: {media_com - media_sem:.2f}% (Com filtros é mais estável)")
 
 
-def plotar_h3_linhas(df):
+def plotar_h3_barras(df):
     """
-    H3: Drawdown (Linhas)
-    Mostra proteção ao longo das rodadas
+    H3: Drawdown (Barras)
+    Compara proteção rodada a rodada
     """
-    print("\n📉 H3 — MÁXIMO DRAWDOWN (Gráfico de Linhas)")
-    
+    print("\n📉 H3 — MÁXIMO DRAWDOWN (Gráfico de Barras)")
+
     df_com = df[df['tipo'] == 'com_filtros'].sort_values('seed').reset_index(drop=True)
     df_sem = df[df['tipo'] == 'sem_filtros'].sort_values('seed').reset_index(drop=True)
-    
+
     fig = go.Figure()
-    
-    fig.add_trace(go.Scatter(
+
+    fig.add_trace(go.Bar(
         x=df_com['seed'],
         y=df_com['Máximo Drawdown (%)'],
-        mode='lines+markers',
         name='Com Filtros',
-        line=dict(color='#1D9E75', width=3),
-        marker=dict(size=10, symbol='circle'),
-        fill='tozeroy',
-        fillcolor='rgba(29, 158, 117, 0.2)',
+        marker_color='#1D9E75',
+        text=df_com['Máximo Drawdown (%)'],
+        texttemplate='%{text:.1f}',
+        textposition='inside',
+        textangle=-90,
+        textfont=dict(color='white', size=11),
         hovertemplate='<b>Rodada %{x}</b><br>Drawdown: %{y:.2f}%<extra></extra>'
     ))
-    
-    fig.add_trace(go.Scatter(
+
+    fig.add_trace(go.Bar(
         x=df_sem['seed'],
         y=df_sem['Máximo Drawdown (%)'],
-        mode='lines+markers',
         name='Sem Filtros',
-        line=dict(color='#E24B4A', width=3, dash='dash'),
-        marker=dict(size=10, symbol='diamond'),
-        fill='tozeroy',
-        fillcolor='rgba(226, 75, 74, 0.1)',
+        marker_color='#E24B4A',
+        text=df_sem['Máximo Drawdown (%)'],
+        texttemplate='%{text:.1f}',
+        textposition='inside',
+        textangle=-90,
+        textfont=dict(color='white', size=11),
         hovertemplate='<b>Rodada %{x}</b><br>Drawdown: %{y:.2f}%<extra></extra>'
     ))
-    
+
     media_com = df_com['Máximo Drawdown (%)'].mean()
-    fig.add_hline(
-        y=media_com,
-        line_dash="dot",
-        line_color="#1D9E75",
-        annotation_text=f"Média Com Filtros: {media_com:.2f}%",
-        annotation_position="right"
-    )
-    
     media_sem = df_sem['Máximo Drawdown (%)'].mean()
-    fig.add_hline(
-        y=media_sem,
-        line_dash="dot",
-        line_color="#E24B4A",
-        annotation_text=f"Média Sem Filtros: {media_sem:.2f}%",
-        annotation_position="right"
-    )
-    
+
     fig.update_layout(
-        title='<b>H3: Máximo Drawdown ao Longo de 10 Rodadas</b><br><sub>Mais próximo de 0 = Melhor proteção (Menos queda)</sub>',
+        title=dict(
+            text='<b>H3: Máximo Drawdown (Mais Próximo de 0 = Melhor)</b>'
+                 '<br><sup>10 rodadas com seed 1-10</sup>',
+            x=0.01, xanchor='left', y=0.95, yanchor='top', font=dict(size=16),
+        ),
         xaxis_title='Seed (Rodada)',
         yaxis_title='Drawdown (%)',
+        xaxis=dict(dtick=2),
+        barmode='group',
         height=600,
         hovermode='x unified',
         template='plotly_dark',
         font=dict(size=12),
-        legend=dict(x=0.02, y=0.98)
+        legend=dict(x=1.0, y=1.0),
+        uniformtext_minsize=9,
     )
-    
-    fig.write_html("analise/h3_drawdown_linhas.html")
-    
+
+    fig.write_html("analise/h3_drawdown_real.html")
+    fig.write_image("analise/h3_drawdown_real.png", scale=2)
+
     print(f"  ✅ Com Filtros Média: {media_com:.2f}%")
     print(f"  ⚠️  Sem Filtros Média: {media_sem:.2f}%")
     print(f"  📊 Diferença: {media_com - media_sem:.2f}% (Com filtros reduz queda)")
 
 
-def plotar_resumo_linhas_matplotlib(df):
+def plotar_resumo_barras_matplotlib(df):
     """
-    Resumo em matplotlib com linhas (3 subgráficos).
+    Resumo em matplotlib com barras agrupadas (3 subgráficos).
     """
     df_com = df[df['tipo'] == 'com_filtros'].sort_values('seed')
     df_sem = df[df['tipo'] == 'sem_filtros'].sort_values('seed')
-    
+
+    largura = 0.35
+    x = np.arange(1, 11)
+
     fig, axes = plt.subplots(1, 3, figsize=(16, 5))
-    
+
     # H1 — Performance
     ax = axes[0]
-    ax.plot(df_com['seed'], df_com['Performance (%)'], 
-            marker='o', linewidth=3, markersize=8, 
-            color='#1D9E75', label='Com Filtros', alpha=0.8)
-    ax.plot(df_sem['seed'], df_sem['Performance (%)'], 
-            marker='s', linewidth=3, markersize=8, 
-            color='#E24B4A', label='Sem Filtros', linestyle='--', alpha=0.8)
-    
-    ax.axhline(y=df_com['Performance (%)'].mean(), color='#1D9E75', 
+    ax.bar(x - largura / 2, df_com['Performance (%)'], width=largura,
+           color='#1D9E75', label='Com Filtros', alpha=0.85)
+    ax.bar(x + largura / 2, df_sem['Performance (%)'], width=largura,
+           color='#E24B4A', label='Sem Filtros', alpha=0.85)
+
+    ax.axhline(y=df_com['Performance (%)'].mean(), color='#1D9E75',
                linestyle=':', linewidth=2, alpha=0.6)
-    ax.axhline(y=df_sem['Performance (%)'].mean(), color='#E24B4A', 
+    ax.axhline(y=df_sem['Performance (%)'].mean(), color='#E24B4A',
                linestyle=':', linewidth=2, alpha=0.6)
-    
+
     ax.set_xlabel('Rodada (Seed)', fontsize=11, fontweight='bold')
     ax.set_ylabel('Performance (%)', fontsize=11, fontweight='bold')
     ax.set_title('H1: Performance\n(Outperformance vs Ibovespa)', fontsize=12, fontweight='bold')
     ax.legend(fontsize=10, loc='best')
     ax.grid(True, alpha=0.3)
-    ax.set_xticks(range(1, 11))
-    
+    ax.set_xticks(x)
+
     # H2 — Volatilidade
     ax = axes[1]
-    ax.plot(df_com['seed'], df_com['Volatilidade Anual (%)'], 
-            marker='o', linewidth=3, markersize=8, 
-            color='#1D9E75', label='Com Filtros', alpha=0.8)
-    ax.plot(df_sem['seed'], df_sem['Volatilidade Anual (%)'], 
-            marker='s', linewidth=3, markersize=8, 
-            color='#E24B4A', label='Sem Filtros', linestyle='--', alpha=0.8)
-    
-    ax.axhline(y=df_com['Volatilidade Anual (%)'].mean(), color='#1D9E75', 
+    ax.bar(x - largura / 2, df_com['Volatilidade Anual (%)'], width=largura,
+           color='#1D9E75', label='Com Filtros', alpha=0.85)
+    ax.bar(x + largura / 2, df_sem['Volatilidade Anual (%)'], width=largura,
+           color='#E24B4A', label='Sem Filtros', alpha=0.85)
+
+    ax.axhline(y=df_com['Volatilidade Anual (%)'].mean(), color='#1D9E75',
                linestyle=':', linewidth=2, alpha=0.6)
-    ax.axhline(y=df_sem['Volatilidade Anual (%)'].mean(), color='#E24B4A', 
+    ax.axhline(y=df_sem['Volatilidade Anual (%)'].mean(), color='#E24B4A',
                linestyle=':', linewidth=2, alpha=0.6)
-    
+
     ax.set_xlabel('Rodada (Seed)', fontsize=11, fontweight='bold')
     ax.set_ylabel('Volatilidade (%)', fontsize=11, fontweight='bold')
     ax.set_title('H2: Volatilidade Anualizada\n(Menor = Melhor)', fontsize=12, fontweight='bold')
     ax.legend(fontsize=10, loc='best')
     ax.grid(True, alpha=0.3)
-    ax.set_xticks(range(1, 11))
-    
+    ax.set_xticks(x)
+
     # H3 — Drawdown
     ax = axes[2]
-    ax.plot(df_com['seed'], df_com['Máximo Drawdown (%)'], 
-            marker='o', linewidth=3, markersize=8, 
-            color='#1D9E75', label='Com Filtros', alpha=0.8)
-    ax.plot(df_sem['seed'], df_sem['Máximo Drawdown (%)'], 
-            marker='s', linewidth=3, markersize=8, 
-            color='#E24B4A', label='Sem Filtros', linestyle='--', alpha=0.8)
-    
-    ax.axhline(y=df_com['Máximo Drawdown (%)'].mean(), color='#1D9E75', 
+    ax.bar(x - largura / 2, df_com['Máximo Drawdown (%)'], width=largura,
+           color='#1D9E75', label='Com Filtros', alpha=0.85)
+    ax.bar(x + largura / 2, df_sem['Máximo Drawdown (%)'], width=largura,
+           color='#E24B4A', label='Sem Filtros', alpha=0.85)
+
+    ax.axhline(y=df_com['Máximo Drawdown (%)'].mean(), color='#1D9E75',
                linestyle=':', linewidth=2, alpha=0.6)
-    ax.axhline(y=df_sem['Máximo Drawdown (%)'].mean(), color='#E24B4A', 
+    ax.axhline(y=df_sem['Máximo Drawdown (%)'].mean(), color='#E24B4A',
                linestyle=':', linewidth=2, alpha=0.6)
-    
+
     ax.set_xlabel('Rodada (Seed)', fontsize=11, fontweight='bold')
     ax.set_ylabel('Drawdown (%)', fontsize=11, fontweight='bold')
     ax.set_title('H3: Máximo Drawdown\n(Mais próximo de 0 = Melhor)', fontsize=12, fontweight='bold')
     ax.legend(fontsize=10, loc='best')
     ax.grid(True, alpha=0.3)
-    ax.set_xticks(range(1, 11))
-    
-    plt.suptitle('Evolução das 3 Hipóteses ao Longo de 10 Rodadas', 
+    ax.set_xticks(x)
+
+    plt.suptitle('Evolução das 3 Hipóteses ao Longo de 10 Rodadas',
                  fontsize=14, fontweight='bold', y=1.00)
     plt.tight_layout()
-    plt.savefig('analise/resumo_linhas.png', dpi=300, bbox_inches='tight')
-    print("\n✅ Gráfico resumido (linhas) salvo em analise/resumo_linhas.png")
+    plt.savefig('analise/resumo_real.png', dpi=300, bbox_inches='tight')
+    print("\n✅ Gráfico resumido (barras) salvo em analise/resumo_real.png")
 
 
 def main():
-    """Executa análise com gráficos de linhas."""
-    
+    """Executa análise com gráficos de barras."""
+
     print("\n" + "="*70)
-    print("  📈 ANÁLISE COM GRÁFICOS DE LINHAS")
+    print("  📊 ANÁLISE COM GRÁFICOS DE BARRAS")
     print("="*70)
-    
+
     df = carregar_dados()
-    
+
     print(f"\n✅ Dados carregados:")
     print(f"   - Com Filtros: {len(df[df['tipo']=='com_filtros'])} rodadas")
     print(f"   - Sem Filtros: {len(df[df['tipo']=='sem_filtros'])} rodadas")
-    
+
     criar_diretorio()
-    
-    # Gerar gráficos de linhas
-    plotar_h1_linhas(df)
-    plotar_h2_linhas(df)
-    plotar_h3_linhas(df)
-    plotar_resumo_linhas_matplotlib(df)
-    
+
+    # Gerar gráficos de barras
+    plotar_h1_barras(df)
+    plotar_h2_barras(df)
+    plotar_h3_barras(df)
+    plotar_resumo_barras_matplotlib(df)
+
     print("\n" + "="*70)
-    print("  ✅ ANÁLISE COM LINHAS CONCLUÍDA!")
+    print("  ✅ ANÁLISE COM BARRAS CONCLUÍDA!")
     print("="*70)
     print("\n📁 Gráficos salvos em analise/:")
-    print("   ├─ h1_performance_linhas.html (interativo)")
-    print("   ├─ h2_volatilidade_linhas.html (interativo)")
-    print("   ├─ h3_drawdown_linhas.html (interativo)")
-    print("   └─ resumo_linhas.png (estático)")
+    print("   ├─ h1_outperformance_real.html (interativo)")
+    print("   ├─ h2_volatilidade_real.html (interativo)")
+    print("   ├─ h3_drawdown_real.html (interativo)")
+    print("   └─ resumo_real.png (estático)")
     print("\n💡 Abra os .html no navegador para versões interativas!")
-    print("   Os gráficos de linhas mostram melhor a evolução e consistência!\n")
+    print("   Os gráficos de barras facilitam a comparação direta por rodada!\n")
 
 
 if __name__ == "__main__":
