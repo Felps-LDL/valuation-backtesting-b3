@@ -1,14 +1,35 @@
-# analise/ — arquivos
+# analise/
 
-Não contém código — são os gráficos finais gerados por `gerar_graficos_resultados.py`
-a partir de `data/resultados_reais.csv`, usados para ilustrar as 3 hipóteses do TCC.
+Gráficos finais gerados por `gerar_graficos_resultados.py` a partir de `data/resultados_reais.csv`, usados para ilustrar as 3 hipóteses do TCC. Não contém código.
 
-| Arquivo | Hipótese | Conteúdo |
-|---|---|---|
-| `h1_outperformance_real.html` / `.png` | **H1 — Outperformance** | Gráfico de barras agrupadas comparando a performance (%) da carteira com filtros vs. sem filtros, rodada a rodada (seeds 1–10). Testa se os filtros fundamentalistas superam o Ibovespa de forma mais consistente que uma seleção aleatória. |
-| `h2_volatilidade_real.html` / `.png` | **H2 — Volatilidade** | Mesmo formato, comparando a volatilidade anualizada (%) — testa se os filtros reduzem o risco/dispersão dos retornos. |
-| `h3_drawdown_real.html` / `.png` | **H3 — Drawdown** | Mesmo formato, comparando o máximo drawdown (%) — testa se os filtros atenuam quedas máximas em relação ao pico. |
-| `resumo_real.png` | H1 + H2 + H3 | Painel único (matplotlib) com os três gráficos de barras lado a lado, para uma visão resumida das três hipóteses. |
+## H1 — Outperformance
 
-Os arquivos `.html` são interativos (abrir no navegador); os `.png` são estáticos,
-prontos para colar em slides do TCC.
+`h1_outperformance_real.html` / `.png`
+
+- Barras agrupadas: performance (%) com filtros vs. sem filtros, rodada a rodada (seeds 1–10)
+- Testa se os filtros fundamentalistas superam o Ibovespa de forma mais consistente que uma seleção aleatória
+
+## H2 — Volatilidade
+
+`h2_volatilidade_real.html` / `.png`
+
+- Mesmo formato do H1, comparando volatilidade anualizada (%)
+- Testa se os filtros reduzem o risco/dispersão dos retornos
+
+## H3 — Drawdown
+
+`h3_drawdown_real.html` / `.png`
+
+- Mesmo formato do H1, comparando máximo drawdown (%)
+- Testa se os filtros atenuam quedas máximas em relação ao pico
+
+## Resumo
+
+`resumo_real.png`
+
+- Painel único (matplotlib) com os três gráficos lado a lado — visão resumida das três hipóteses
+
+## Formatos
+
+- **`.html`** — interativos, abrir no navegador
+- **`.png`** — estáticos, prontos para slides do TCC
