@@ -44,7 +44,7 @@ ESTRUTURA DE ABAS:
     ├─ Aviso: Look-Ahead Bias explicado
     ├─ Button: Rodar Backtesting
     ├─ Saída (se sucesso):
-    │  ├─ 4 KPIs: CAGR, Sharpe, Drawdown, Outperformance
+    │  ├─ 3 KPIs: Outperformance, Volatilidade, Drawdown
     │  ├─ Expander: Todas as métricas (tabela)
     │  ├─ Gráfico: Equity curve (carteira vs Ibovespa)
     │  ├─ Gráfico: Drawdown (série temporal)
@@ -409,9 +409,10 @@ with aba2:
             st.success(f"📊 RESULTADO DO TESTE COM FILTROS | Seed: {semente_teste}")
 
         # KPIs
-        cols = st.columns(4)
-        kpis = [("CAGR (% a.a.)", "📈"), ("Sharpe Ratio", "⚖️"),
-                ("Máximo Drawdown (%)", "📉"), ("Outperformance (%)", "🏆")]
+        cols = st.columns(3)
+        kpis = [("Outperformance (%)", "🏆"),
+                ("Volatilidade Anual (%)", "📊"),
+                ("Máximo Drawdown (%)", "📉")]
         for i, (k_nome, icon) in enumerate(kpis):
             cols[i].metric(f"{icon} {k_nome}",
                            metricas.get(k_nome, "N/A"))
