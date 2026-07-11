@@ -86,7 +86,7 @@ def plotar_h1_barras(df):
 
     fig.update_layout(
         title=dict(
-            text='<b>H1: Performance (Outperformance vs Ibovespa)</b>'
+            text='<b>Q1: Performance (Outperformance vs Ibovespa)</b>'
                  '<br><sup>10 rodadas com seed 1-10</sup>',
             x=0.01, xanchor='left', y=0.95, yanchor='top', font=dict(size=16),
         ),
@@ -153,7 +153,7 @@ def plotar_h2_barras(df):
 
     fig.update_layout(
         title=dict(
-            text='<b>H2: Volatilidade Anualizada (Menor = Menor Risco)</b>'
+            text='<b>Q2: Volatilidade Anualizada (Menor = Menor Risco)</b>'
                  '<br><sup>10 rodadas com seed 1-10</sup>',
             x=0.01, xanchor='left', y=0.95, yanchor='top', font=dict(size=16),
         ),
@@ -220,7 +220,7 @@ def plotar_h3_barras(df):
 
     fig.update_layout(
         title=dict(
-            text='<b>H3: Máximo Drawdown (Mais Próximo de 0 = Melhor)</b>'
+            text='<b>Q3: Máximo Drawdown (Mais Próximo de 0 = Melhor)</b>'
                  '<br><sup>10 rodadas com seed 1-10</sup>',
             x=0.01, xanchor='left', y=0.95, yanchor='top', font=dict(size=16),
         ),
@@ -270,7 +270,7 @@ def plotar_resumo_barras_matplotlib(df):
 
     ax.set_xlabel('Rodada (Seed)', fontsize=11, fontweight='bold')
     ax.set_ylabel('Performance (%)', fontsize=11, fontweight='bold')
-    ax.set_title('H1: Performance\n(Outperformance vs Ibovespa)', fontsize=12, fontweight='bold')
+    ax.set_title('Q1: Performance\n(Outperformance vs Ibovespa)', fontsize=12, fontweight='bold')
     ax.legend(fontsize=10, loc='best')
     ax.grid(True, alpha=0.3)
     ax.set_xticks(x)
@@ -289,7 +289,7 @@ def plotar_resumo_barras_matplotlib(df):
 
     ax.set_xlabel('Rodada (Seed)', fontsize=11, fontweight='bold')
     ax.set_ylabel('Volatilidade (%)', fontsize=11, fontweight='bold')
-    ax.set_title('H2: Volatilidade Anualizada\n(Menor = Melhor)', fontsize=12, fontweight='bold')
+    ax.set_title('Q2: Volatilidade Anualizada\n(Menor = Melhor)', fontsize=12, fontweight='bold')
     ax.legend(fontsize=10, loc='best')
     ax.grid(True, alpha=0.3)
     ax.set_xticks(x)
@@ -308,7 +308,7 @@ def plotar_resumo_barras_matplotlib(df):
 
     ax.set_xlabel('Rodada (Seed)', fontsize=11, fontweight='bold')
     ax.set_ylabel('Drawdown (%)', fontsize=11, fontweight='bold')
-    ax.set_title('H3: Máximo Drawdown\n(Mais próximo de 0 = Melhor)', fontsize=12, fontweight='bold')
+    ax.set_title('Q3: Máximo Drawdown\n(Mais próximo de 0 = Melhor)', fontsize=12, fontweight='bold')
     ax.legend(fontsize=10, loc='best')
     ax.grid(True, alpha=0.3)
     ax.set_xticks(x)
